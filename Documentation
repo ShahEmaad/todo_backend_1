@@ -1,0 +1,155 @@
+// The Documentation is in the same order as the use of the functions
+
+in this application we are listening at port 3000
+on initialization we connect to the mongoose database and check if the connection is established in the index.js file
+All the functions are called through the [Router] in the router.js file
+The router utilizes the .env file for the firebase configeration
+The router utilizes the serviceAccount.json file  in private_key folder for the admin configeration
+
+//
+Sign-up function:
+it's a [Post] method with route : localhost:3000/api/signUp
+
+It takes requests with body of the following raw form (Content-Type: json) :
+{
+    "name": String,
+    "age": int,
+    "email": String,
+    "password": String
+}
+
+It  creats a user which is then returned as response
+Note:
+The password is encrypted before storge
+Internal checks are used to ensure that only a single user can be posted with a given email.
+
+
+//
+Sign-In function:
+it's a [Get] method with route : localhost:3000/api/login
+
+It takes requests with body of the following raw form (Content-Type: json) :
+{
+    "email": String,
+    "password":String
+}
+
+The respone is JSON of the form:
+{
+    "Status": String,
+    "userId":The database id of the user
+}
+Note:
+It first checks if a user exists for the given email
+Only if a user is found it compares the given password to the encripted user password
+If and only if these checks are passed a custom web token is generated and the user signs in with it.
+
+// MIDDLEWARE
+checkAuth function:
+This function checks if the authentication state is changed
+It attaches decodes the token and attaches the decoded ID to our request if we are still signed in
+Otherwise it stops the the function and returns a message that the user has signed out
+Note:
+This middleware is used in all functions exceps Sign-Up and Sign-In
+
+//
+Get User function:
+it's a [Get] method with route : localhost:3000/api/getUser
+
+It takes requests without a body
+
+The respone is the user as its stored in the database
+Note:
+checkAuth middleware is used
+
+//
+Changed User function:
+it's a [Patch] method with route : localhost:3000/api/updateUser
+
+It takes requests with body of the following raw form (Content-Type: json) :
+{
+    "name": String,
+    "age": Int
+}
+
+This function Changes the Name and Age parameters of the user
+Note:
+checkAuth middleware is used
+Change Password finction uses [Patch] method with route : localhost:3000/api/changePassword
+Change Email function uses method with route : localhost:3000/api/changeEmail
+There request body is of the raw form (Content-Type: json):
+{
+    "password/email":String
+}
+
+//
+Logout User function:
+it's a [Delete] method with route : localhost:3000/api/logout
+It logs out the user
+Note:
+checkAuth middleware is used
+
+//
+Delete User function:
+it's a [Delete] method with route : localhost:3000/api/delete
+
+It takes requests without a body:
+
+Note:
+checkAuth middleware is used
+This function also deletes all the TODO's of the user
+
+//
+Post Todo function:
+it's a [Post] method with route : localhost:3000/api/todoPost
+
+It takes requests with body of the following raw form (Content-Type: json) :
+{
+    "task": String,
+    "comp": Boolean
+
+}
+
+It  then creates and returns
+Note:
+checkAuth middleware is used
+Internal checks are used to ensure that the user id is valid
+
+//
+Get Todo function:
+it's a [Get] method with route : localhost:3000/api/todoGetOne/:id
+:id is the _id of the todo post
+The respone is all the user as its stored in the database
+Note:
+checkAuth middleware is used
+
+//
+Get All Todo function:
+it's a [Get] method with route : localhost:3000/api/todoGetAll
+
+It doesn't require a body
+
+The respone is all the Todo's of which have the user with the given id
+Note:
+checkAuth middleware is used
+
+//
+Changed Todo function:
+it's a [Patch] method with route : localhost:3000/api/todoUpdate/:id
+:id is the todo _id
+
+{
+    "task": String,
+    "comp": Boolean
+}
+This function Changes the Task and Comp parameters of the Todo
+Note:
+checkAuth middleware is used
+The user to which a todo is linked can't be Changed
+
+//
+Delete Todo function:
+it's a [Delete] method with route : localhost:3000/api/todoDelete/:id
+
+Note:
+checkAuth middleware is used
